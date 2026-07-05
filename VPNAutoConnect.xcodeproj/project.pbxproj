@@ -1,0 +1,328 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0AD7FE5537764D97B954D5E9 /* VPNAutoConnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76340859D9F4392A17F88E7 /* VPNAutoConnectApp.swift */; };
+		BDC6F3728F794A80BE77EE89 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769F1B923E8D4ABD92D343FE /* AppState.swift */; };
+		A0ACC4FFA0BD41059E4CA2F0 /* VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF856E7EC804EC1A8AE2C6D /* VPNConfiguration.swift */; };
+		6BEA429B1840457B9ED5A902 /* AppPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8AE3C215B48979067F424 /* AppPaths.swift */; };
+		1F76A754DFCC4F489ED7EB0B /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECFC8F131454FFB8AE3C1DE /* KeychainService.swift */; };
+		EF68F6242BB64B30BD2B0256 /* ConfigWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AF4A3A69B24DB0B871126C /* ConfigWriter.swift */; };
+		96CC86AC35364FF4B353D1BC /* VPNManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6711BBD2558346009DAE959D /* VPNManager.swift */; };
+		BD2FA49ACB3D45A78CAC7339 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04E13D21EF94D219DA1BA78 /* MenuBarView.swift */; };
+		252525252525252525252525 /* MenuBarIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262626262626262626262626 /* MenuBarIconView.swift */; };
+		D1EA215EB98E44B9B385F890 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC25C0F9A029457D8DC6D784 /* SettingsView.swift */; };
+		181818181818181818181818 /* CredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191919191919191919191919 /* CredentialStore.swift */; };
+		232323232323232323232323 /* Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242424242424242424242424 /* Credentials.swift */; };
+		272727272727272727272727 /* OpenFortiVPNProcessControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282828282828282828282828 /* OpenFortiVPNProcessControl.swift */; };
+		292929292929292929292929 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303030303030303030303030 /* AppDelegate.swift */; };
+		313131313131313131313131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 323232323232323232323232 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FD7BA360F1CB4A8DAFCB2299 /* SSLVPNAutoConnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SSLVPNAutoConnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E76340859D9F4392A17F88E7 /* VPNAutoConnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNAutoConnectApp.swift; sourceTree = "<group>"; };
+		769F1B923E8D4ABD92D343FE /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		FAF856E7EC804EC1A8AE2C6D /* VPNConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNConfiguration.swift; sourceTree = "<group>"; };
+		3CC8AE3C215B48979067F424 /* AppPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPaths.swift; sourceTree = "<group>"; };
+		0ECFC8F131454FFB8AE3C1DE /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		D3AF4A3A69B24DB0B871126C /* ConfigWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigWriter.swift; sourceTree = "<group>"; };
+		6711BBD2558346009DAE959D /* VPNManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNManager.swift; sourceTree = "<group>"; };
+		A04E13D21EF94D219DA1BA78 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		262626262626262626262626 /* MenuBarIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconView.swift; sourceTree = "<group>"; };
+		CC25C0F9A029457D8DC6D784 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		191919191919191919191919 /* CredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialStore.swift; sourceTree = "<group>"; };
+		242424242424242424242424 /* Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credentials.swift; sourceTree = "<group>"; };
+		282828282828282828282828 /* OpenFortiVPNProcessControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFortiVPNProcessControl.swift; sourceTree = "<group>"; };
+		303030303030303030303030 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		323232323232323232323232 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B84FBF870E004FA8BD6C3AB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		111111111111111111111111 /* VPNAutoConnect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VPNAutoConnect.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		222222222222222222222222 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		333333333333333333333333 = {
+			isa = PBXGroup;
+			children = (
+				444444444444444444444444 /* VPNAutoConnect */,
+				555555555555555555555555 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		555555555555555555555555 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FD7BA360F1CB4A8DAFCB2299 /* SSLVPNAutoConnect.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		444444444444444444444444 /* VPNAutoConnect */ = {
+			isa = PBXGroup;
+			children = (
+				E76340859D9F4392A17F88E7 /* VPNAutoConnectApp.swift */,
+				303030303030303030303030 /* AppDelegate.swift */,
+				769F1B923E8D4ABD92D343FE /* AppState.swift */,
+				323232323232323232323232 /* Assets.xcassets */,
+				666666666666666666666666 /* Models */,
+				777777777777777777777777 /* Services */,
+				888888888888888888888888 /* Views */,
+				B84FBF870E004FA8BD6C3AB5 /* Info.plist */,
+				111111111111111111111111 /* VPNAutoConnect.entitlements */,
+			);
+			path = VPNAutoConnect;
+			sourceTree = "<group>";
+		};
+		666666666666666666666666 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FAF856E7EC804EC1A8AE2C6D /* VPNConfiguration.swift */,
+				242424242424242424242424 /* Credentials.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		777777777777777777777777 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				3CC8AE3C215B48979067F424 /* AppPaths.swift */,
+				0ECFC8F131454FFB8AE3C1DE /* KeychainService.swift */,
+				191919191919191919191919 /* CredentialStore.swift */,
+				D3AF4A3A69B24DB0B871126C /* ConfigWriter.swift */,
+				282828282828282828282828 /* OpenFortiVPNProcessControl.swift */,
+				6711BBD2558346009DAE959D /* VPNManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		888888888888888888888888 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A04E13D21EF94D219DA1BA78 /* MenuBarView.swift */,
+				262626262626262626262626 /* MenuBarIconView.swift */,
+				CC25C0F9A029457D8DC6D784 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		999999999999999999999999 /* VPNAutoConnect */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AAAAAAAAAAAAAAAAAAAAAAAA /* Build configuration list for PBXNativeTarget "VPNAutoConnect" */;
+			buildPhases = (
+				BBBBBBBBBBBBBBBBBBBBBBBB /* Sources */,
+				333333333333333333333334 /* Resources */,
+				222222222222222222222222 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VPNAutoConnect;
+			productName = SSLVPNAutoConnect;
+			productReference = FD7BA360F1CB4A8DAFCB2299 /* SSLVPNAutoConnect.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CCCCCCCCCCCCCCCCCCCCCCCC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					999999999999999999999999 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = DDDDDDDDDDDDDDDDDDDDDDDD /* Build configuration list for PBXProject "VPNAutoConnect" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 333333333333333333333333;
+			productRefGroup = 555555555555555555555555 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				999999999999999999999999 /* VPNAutoConnect */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BBBBBBBBBBBBBBBBBBBBBBBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0AD7FE5537764D97B954D5E9 /* VPNAutoConnectApp.swift in Sources */,
+				BDC6F3728F794A80BE77EE89 /* AppState.swift in Sources */,
+				A0ACC4FFA0BD41059E4CA2F0 /* VPNConfiguration.swift in Sources */,
+				6BEA429B1840457B9ED5A902 /* AppPaths.swift in Sources */,
+				1F76A754DFCC4F489ED7EB0B /* KeychainService.swift in Sources */,
+				EF68F6242BB64B30BD2B0256 /* ConfigWriter.swift in Sources */,
+				96CC86AC35364FF4B353D1BC /* VPNManager.swift in Sources */,
+				BD2FA49ACB3D45A78CAC7339 /* MenuBarView.swift in Sources */,
+				252525252525252525252525 /* MenuBarIconView.swift in Sources */,
+				D1EA215EB98E44B9B385F890 /* SettingsView.swift in Sources */,
+				181818181818181818181818 /* CredentialStore.swift in Sources */,
+				232323232323232323232323 /* Credentials.swift in Sources */,
+				272727272727272727272727 /* OpenFortiVPNProcessControl.swift in Sources */,
+				292929292929292929292929 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		333333333333333333333334 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				313131313131313131313131 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		EEEEEEEEEEEEEEEEEEEEEEEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		FFFFFFFFFFFFFFFFFFFFFFFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		121212121212121212121212 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VPNAutoConnect/VPNAutoConnect.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VPNAutoConnect/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3tty0n.vpn-auto-connect;
+				PRODUCT_NAME = SSLVPNAutoConnect;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		131313131313131313131313 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = VPNAutoConnect/VPNAutoConnect.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = VPNAutoConnect/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.3tty0n.vpn-auto-connect;
+				PRODUCT_NAME = SSLVPNAutoConnect;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DDDDDDDDDDDDDDDDDDDDDDDD /* Build configuration list for PBXProject "VPNAutoConnect" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEEEEEEEEEEEEEEEEEEEEEEE /* Debug */,
+				FFFFFFFFFFFFFFFFFFFFFFFF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AAAAAAAAAAAAAAAAAAAAAAAA /* Build configuration list for PBXNativeTarget "VPNAutoConnect" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				121212121212121212121212 /* Debug */,
+				131313131313131313131313 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CCCCCCCCCCCCCCCCCCCCCCCC /* Project object */;
+}

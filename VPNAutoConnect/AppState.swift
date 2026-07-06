@@ -81,6 +81,12 @@ final class AppState: ObservableObject {
         }
     }
 
+    func prepareForQuit() async {
+        if vpnManager.status.isActive {
+            await disconnect()
+        }
+    }
+
     func restartApp() async {
         await disconnect()
 

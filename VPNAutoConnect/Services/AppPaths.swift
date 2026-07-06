@@ -39,6 +39,10 @@ enum AppPaths {
         applicationSupport.appendingPathComponent("stop-openfortivpn.sh")
     }
 
+    static var networkRestoreScript: URL {
+        applicationSupport.appendingPathComponent("restore-network.sh")
+    }
+
     static func openfortivpnBinary() -> String? {
         openfortivpnBinaryPath
     }

@@ -42,7 +42,10 @@ struct MenuBarView: View {
             }
 
             Button("Quit") {
-                NSApplication.shared.terminate(nil)
+                Task {
+                    await appState.prepareForQuit()
+                    NSApplication.shared.terminate(nil)
+                }
             }
         }
         .onAppear {

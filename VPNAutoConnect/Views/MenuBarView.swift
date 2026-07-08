@@ -16,7 +16,7 @@ struct MenuBarView: View {
                 .foregroundStyle(statusForegroundStyle)
                 .symbolRenderingMode(.monochrome)
 
-            if !appState.vpnManager.lastLogLine.isEmpty {
+            if shouldShowLastLogLine {
                 Text(appState.vpnManager.lastLogLine)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
@@ -25,10 +25,15 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button(status.isActive ? "Disconnect" : "Connect") {
-                Task { await appState.toggleConnection() }
+            Button("Connect") {
+                Task { await appState.connect() }
             }
-            .disabled(!appState.canConnect && !status.isActive)
+            .disabled(!appState.canConnect || appState.isBusy || status.isActive)
+
+            Button("Stop") {
+                Task { await appState.stop() }
+            }
+            .disabled(!appState.canStop || appState.isBusy)
 
             Button("Settings…") {
                 NSApp.activate(ignoringOtherApps: true)
@@ -42,15 +47,19 @@ struct MenuBarView: View {
             }
 
             Button("Quit") {
-                Task {
-                    await appState.prepareForQuit()
-                    NSApplication.shared.terminate(nil)
-                }
+                NSApplication.shared.terminate(nil)
             }
         }
-        .onAppear {
+            .onAppear {
+            appState.refreshConnectionControls()
             appState.applyAutoConnectIfNeeded()
         }
+    }
+
+    private var shouldShowLastLogLine: Bool {
+        guard !appState.vpnManager.lastLogLine.isEmpty else { return false }
+        if case .connected = status { return false }
+        return true
     }
 
     private var statusForegroundStyle: AnyShapeStyle {

@@ -109,6 +109,7 @@ final class VPNManager: ObservableObject {
 
         switch status {
         case .running, .connected:
+            applyConnectionStatusFromLog()
             startMonitoring()
             return
         case .connecting:
@@ -124,7 +125,6 @@ final class VPNManager: ObservableObject {
         }
 
         status = .connecting
-        try? FileManager.default.removeItem(at: AppPaths.logFile)
 
         do {
             let configPath = try ConfigWriter.write(config: config, credentials: credentials)
@@ -133,12 +133,17 @@ final class VPNManager: ObservableObject {
                isProcessRunning(pid: existingPID) {
                 try String(existingPID).write(to: AppPaths.pidFile, atomically: true, encoding: .utf8)
                 status = .running
+                applyConnectionStatusFromLog()
                 startMonitoring()
                 return
             }
 
+            OpenFortiVPNProcessControl.prepareForConnect()
+
+            try? FileManager.default.removeItem(at: AppPaths.logFile)
             try await launchOpenFortiVPN(binary: binary, configPath: configPath.path)
             status = .running
+            applyConnectionStatusFromLog()
             startMonitoring()
         } catch let error as VPNError {
             status = .error(error.localizedDescription ?? "Unknown error", kind: error.errorKind)
@@ -164,6 +169,36 @@ final class VPNManager: ObservableObject {
         await terminateOpenFortiVPN()
         status = .disconnected
         lastLogLine = ""
+    }
+
+    func syncExistingSessionIfNeeded() {
+        if status.isActive {
+            if monitorTask == nil {
+                ensurePIDFileRecorded()
+                startMonitoring()
+            }
+            return
+        }
+
+        guard OpenFortiVPNProcessControl.hasActiveSession() else { return }
+
+        ensurePIDFileRecorded()
+        status = .running
+        applyConnectionStatusFromLog()
+        if case .running = status, OpenFortiVPNProcessControl.defaultRouteUsesPPP() {
+            status = .connected
+        }
+        startMonitoring()
+    }
+
+    private func ensurePIDFileRecorded() {
+        guard let pid = OpenFortiVPNProcessControl.managedProcessPID(),
+              isProcessRunning(pid: pid)
+        else {
+            return
+        }
+
+        try? String(pid).write(to: AppPaths.pidFile, atomically: true, encoding: .utf8)
     }
 
     // MARK: - Process management
@@ -327,9 +362,11 @@ final class VPNManager: ObservableObject {
         monitorTask = Task.detached(priority: .utility) { [weak self] in
             var offset: UInt64 = 0
 
-            for _ in 0..<60 {
+            for pass in 0..<60 {
                 if Task.isCancelled { return }
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                if pass > 0 {
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                }
 
                 let snapshot = Self.readLogSnapshot(
                     logURL: logURL,
@@ -355,6 +392,11 @@ final class VPNManager: ObservableObject {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
 
                 if !Self.isVPNProcessAlive(pidURL: pidURL) {
+                    if OpenFortiVPNProcessControl.hasActiveSession() {
+                        await self?.recoverTrackedSession()
+                        continue
+                    }
+
                     let snapshot = Self.readLogSnapshot(
                         logURL: logURL,
                         offset: &offset,
@@ -394,16 +436,35 @@ final class VPNManager: ObservableObject {
         }
     }
 
-    private func applySnapshot(_ snapshot: LogSnapshot) {
-        if !snapshot.lastLogLine.isEmpty, snapshot.lastLogLine != lastLogLine {
-            lastLogLine = snapshot.lastLogLine
+    private func recoverTrackedSession() {
+        ensurePIDFileRecorded()
+        applyConnectionStatusFromLog()
+        if case .running = status, OpenFortiVPNProcessControl.defaultRouteUsesPPP() {
+            status = .connected
         }
+    }
+
+    private func applySnapshot(_ snapshot: LogSnapshot) {
         if snapshot.status != status {
             if case .connected = status, case .error = snapshot.status {
                 return
             }
             status = snapshot.status
+            if case .connected = snapshot.status {
+                lastLogLine = ""
+                return
+            }
         }
+
+        if !snapshot.lastLogLine.isEmpty, snapshot.lastLogLine != lastLogLine {
+            if case .connected = status { return }
+            lastLogLine = snapshot.lastLogLine
+        }
+    }
+
+    private func applyConnectionStatusFromLog() {
+        guard let snapshot = Self.readFullLogSnapshot(logURL: AppPaths.logFile) else { return }
+        applySnapshot(snapshot)
     }
 
     nonisolated private static let ignorableErrorFragments = [
@@ -422,32 +483,35 @@ final class VPNManager: ObservableObject {
     }
 
     nonisolated private static func isPositiveLogLine(_ line: String) -> Bool {
-        line.contains("Tunnel is up and running")
-            || line.contains("Interface ppp")
-            || line.hasPrefix("INFO:")
+        isTunnelConnectedLogLine(line) || line.hasPrefix("INFO:")
     }
 
-    nonisolated private static func readLogSnapshot(
-        logURL: URL,
-        offset: inout UInt64,
-        currentStatus: VPNStatus
-    ) -> LogSnapshot? {
-        guard let handle = try? FileHandle(forReadingFrom: logURL) else { return nil }
-        defer { try? handle.close() }
+    nonisolated private static func isTunnelConnectedLogLine(_ line: String) -> Bool {
+        line.localizedCaseInsensitiveContains("Tunnel is up and running")
+            || line.localizedCaseInsensitiveContains("Interface ppp")
+            || line.localizedCaseInsensitiveContains("Negotiation complete")
+    }
 
-        handle.seek(toFileOffset: offset)
-        let data = handle.readDataToEndOfFile()
-        offset = handle.offsetInFile
-
-        guard let text = String(data: data, encoding: .utf8), !text.isEmpty else {
+    nonisolated private static func readFullLogSnapshot(logURL: URL) -> LogSnapshot? {
+        guard
+            let content = try? String(contentsOf: logURL, encoding: .utf8),
+            !content.isEmpty
+        else {
             return nil
         }
 
+        return parseLogSnapshot(from: content, currentStatus: .running)
+    }
+
+    nonisolated private static func parseLogSnapshot(
+        from text: String,
+        currentStatus: VPNStatus
+    ) -> LogSnapshot {
         var lastLogLine = ""
         var status = currentStatus
 
         for line in text.components(separatedBy: .newlines) where !line.isEmpty {
-            if line.contains("Tunnel is up and running") || line.contains("Interface ppp") {
+            if isTunnelConnectedLogLine(line) {
                 status = .connected
                 lastLogLine = line
                 continue
@@ -482,14 +546,40 @@ final class VPNManager: ObservableObject {
         return LogSnapshot(lastLogLine: lastLogLine, status: status)
     }
 
+    nonisolated private static func readLogSnapshot(
+        logURL: URL,
+        offset: inout UInt64,
+        currentStatus: VPNStatus
+    ) -> LogSnapshot? {
+        guard let handle = try? FileHandle(forReadingFrom: logURL) else { return nil }
+        defer { try? handle.close() }
+
+        handle.seek(toFileOffset: offset)
+        let data = handle.readDataToEndOfFile()
+        offset = handle.offsetInFile
+
+        guard let text = String(data: data, encoding: .utf8), !text.isEmpty else {
+            return nil
+        }
+
+        return parseLogSnapshot(from: text, currentStatus: currentStatus)
+    }
+
     nonisolated private static func isVPNProcessAlive(pidURL: URL) -> Bool {
-        guard
-            let content = try? String(contentsOf: pidURL, encoding: .utf8),
-            let pid = Int32(content.trimmingCharacters(in: .whitespacesAndNewlines))
+        if let content = try? String(contentsOf: pidURL, encoding: .utf8),
+           let pid = Int32(content.trimmingCharacters(in: .whitespacesAndNewlines)),
+           kill(pid_t(pid), 0) == 0 {
+            return true
+        }
+
+        guard let pid = OpenFortiVPNProcessControl.managedProcessPID(),
+              kill(pid, 0) == 0
         else {
             return false
         }
-        return kill(pid_t(pid), 0) == 0
+
+        try? String(pid).write(to: pidURL, atomically: true, encoding: .utf8)
+        return true
     }
 
     private func readRecentLog() -> String {

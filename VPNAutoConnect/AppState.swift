@@ -6,6 +6,7 @@ import SwiftUI
 final class AppState: ObservableObject {
     @Published private(set) var config: VPNConfiguration
     @Published private(set) var canConnect = false
+    @Published private(set) var canStop = false
     @Published private(set) var openfortivpnInstalled = false
 
     let vpnManager = VPNManager()
@@ -15,15 +16,28 @@ final class AppState: ObservableObject {
 
     init() {
         config = VPNConfiguration.load()
+        AppLifecycle.appState = self
         refreshSystemStatus()
         updateCanConnect()
+        vpnManager.syncExistingSessionIfNeeded()
+        updateConnectionControls()
 
         vpnManager.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
+                self?.updateConnectionControls()
             }
             .store(in: &cancellables)
+    }
+
+    var isBusy: Bool {
+        switch vpnManager.status {
+        case .connecting, .disconnecting:
+            return true
+        default:
+            return false
+        }
     }
 
     func refreshSystemStatus() {
@@ -59,16 +73,16 @@ final class AppState: ObservableObject {
         await vpnManager.connect(config: config)
     }
 
-    func disconnect() async {
+    func stop() async {
         await vpnManager.disconnect()
+        updateConnectionControls()
     }
 
-    func toggleConnection() async {
-        if vpnManager.status.isActive {
-            await disconnect()
-        } else {
-            await connect()
-        }
+    func refreshConnectionControls() {
+        refreshSystemStatus()
+        updateCanConnect()
+        vpnManager.syncExistingSessionIfNeeded()
+        updateConnectionControls()
     }
 
     func applyAutoConnectIfNeeded() {
@@ -82,13 +96,11 @@ final class AppState: ObservableObject {
     }
 
     func prepareForQuit() async {
-        if vpnManager.status.isActive {
-            await disconnect()
-        }
+        await stop()
     }
 
     func restartApp() async {
-        await disconnect()
+        await stop()
 
         let bundlePath = Bundle.main.bundlePath
         let relaunch = Process()
@@ -124,6 +136,10 @@ final class AppState: ObservableObject {
         let hostValid = !config.host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && config.port > 0 && config.port <= 65535
         canConnect = hostValid && CredentialStore.hasKeychainCredentials()
+    }
+
+    private func updateConnectionControls() {
+        canStop = vpnManager.status.isActive || OpenFortiVPNProcessControl.hasActiveSession()
     }
 
     private func updateLaunchAtLogin(enabled: Bool) {

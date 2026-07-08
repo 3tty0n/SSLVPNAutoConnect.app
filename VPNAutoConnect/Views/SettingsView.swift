@@ -9,8 +9,29 @@ struct SettingsView: View {
     @State private var draftPassword = ""
     @State private var didLoadDraft = false
 
+    private var status: VPNStatus {
+        appState.vpnManager.status
+    }
+
     var body: some View {
         Form {
+            Section("Connection") {
+                Label(status.label, systemImage: status.menuBarSymbol)
+                    .foregroundStyle(statusColor)
+
+                HStack {
+                    Button("Connect") {
+                        Task { await appState.connect() }
+                    }
+                    .disabled(!appState.canConnect || appState.isBusy || status.isActive)
+
+                    Button("Stop") {
+                        Task { await appState.stop() }
+                    }
+                    .disabled(!appState.canStop || appState.isBusy)
+                }
+            }
+
             Section("VPN Gateway") {
                 TextField("Host", text: $draft.host)
                     .textFieldStyle(.roundedBorder)
@@ -75,7 +96,7 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 480, height: 540)
+        .frame(width: 480, height: 580)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") { dismiss() }
@@ -93,10 +114,23 @@ struct SettingsView: View {
             }
         }
         .onAppear {
+            appState.refreshConnectionControls()
             guard !didLoadDraft else { return }
             didLoadDraft = true
             loadDraft()
-            appState.refreshSystemStatus()
+        }
+    }
+
+    private var statusColor: Color {
+        switch status {
+        case .connected:
+            return .green
+        case .connecting, .disconnecting, .running:
+            return .orange
+        case .error:
+            return .red
+        case .disconnected:
+            return .secondary
         }
     }
 

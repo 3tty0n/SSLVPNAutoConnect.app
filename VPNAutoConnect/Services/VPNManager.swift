@@ -138,7 +138,7 @@ final class VPNManager: ObservableObject {
                 return
             }
 
-            OpenFortiVPNProcessControl.prepareForConnect()
+            OpenFortiVPNProcessControl.prepareForConnect(setDNS: config.setDNS)
 
             try? FileManager.default.removeItem(at: AppPaths.logFile)
             try await launchOpenFortiVPN(binary: binary, configPath: configPath.path)
@@ -180,7 +180,11 @@ final class VPNManager: ObservableObject {
             return
         }
 
-        guard OpenFortiVPNProcessControl.hasActiveSession() else { return }
+        guard OpenFortiVPNProcessControl.hasActiveSession() else {
+            // 有効なセッションが検出できなければ、クラッシュ等で残った古い状態ファイルを消す。
+            OpenFortiVPNProcessControl.cleanupStaleStateIfNeeded()
+            return
+        }
 
         ensurePIDFileRecorded()
         status = .running
@@ -379,8 +383,8 @@ final class VPNManager: ObservableObject {
                     if case .connected = snapshot.status { break }
                     if case .error = snapshot.status {
                         let processAlive = Self.isVPNProcessAlive(pidURL: pidURL)
-                        let currentStatus = await self?.status
-                        if processAlive, case .connected = currentStatus {
+                        // プロセスが生きていれば、一時的なログの ERROR 行でも監視を続ける。
+                        if processAlive {
                             continue
                         }
                         return
@@ -388,12 +392,22 @@ final class VPNManager: ObservableObject {
                 }
             }
 
+            var consecutiveDeadCount = 0
+
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 3_000_000_000)
 
                 if !Self.isVPNProcessAlive(pidURL: pidURL) {
+                    consecutiveDeadCount += 1
+
+                    // 初回の dead は一時的な pgrep 失敗の可能性があるので、数回リトライする。
+                    if consecutiveDeadCount < 3 {
+                        continue
+                    }
+
                     if OpenFortiVPNProcessControl.hasActiveSession() {
                         await self?.recoverTrackedSession()
+                        consecutiveDeadCount = 0
                         continue
                     }
 
@@ -424,6 +438,8 @@ final class VPNManager: ObservableObject {
                     }
                     return
                 }
+
+                consecutiveDeadCount = 0
 
                 if let snapshot = Self.readLogSnapshot(
                     logURL: logURL,
